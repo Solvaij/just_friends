@@ -35,12 +35,14 @@ courses = {
     "health": {"name": "Health and Fitness", "skills": ["body_mech", "vigor"], "alts": {"hf", "health", "fitness", "health_and_fitness", "health and fitness"}, "index": "health"},
     "cooking": {"name": "Food and Nutrition", "skills": ["cooking", "comfort"], "alts": {"ck", "cooking", "fn", "food", "nutrition", "food_and_nutrition"}, "index": "cooking"},
     "mechanics": {"name": "Crafting and Mechanics", "skills": ["making", "instinct"], "alts": {"mc", "mech", "craft", "autos", "mechanics", "crafting_mechanics", "crafting mechanics", "craft_mech", "crafting_and_mechanics"}, "index": "mechanics"},
-    "oral_com": {"name": "Oral Communication", "skills": ["persuasion", "composure"], "alts": {"oc", "oral_com", "oral com", "com", "communication", "oral_communication", "oral communication"}, "index": "oral_com"}
+    "oral_com": {"name": "Oral Communication", "skills": ["persuasion", "composure"], "alts": {"oc", "oral_com", "oral com", "com", "communication", "oral_communication", "oral communication"}, "index": "oral_com"},
+    "fine_art": {},
+    "life_skills": {}
 }
 
 extracurriculars = {
     "soccer": {"name": "Football / Soccer", "skills": ["strength", "vigor", "acrobatics", "presence"], "index": "soccer"},
-    "staff": {"name": "Staff Arts", "skills": ["acrobatics", "reaction", "instinct", "body_mech"], "index": "staff"},
+    "staff": {"name": "Staff Fencing", "skills": ["acrobatics", "reaction", "instinct", "body_mech"], "index": "staff"},
     "debate": {"name": "Debate Team", "skills": ["persuasion", "composure", "communication", "logic"], "index": "debate"},
     "band": {"name": "Marching Band", "skills": ["motor_skill", "body_mech", "arts", "vigor"], "index": "band"},
     "mancala": {"name": "Mancala Club", "skills": ["logic", "instinct", "recall", "willpower"], "index": "mancala"},
@@ -53,16 +55,16 @@ extracurriculars = {
 
 social = {
     "school": {"name": "Social at School", "capacity": 9},
-    "one_only": {"name": "One-on-One", "capacity": 1},
-    "group": {"name": "Group Activity", "capacity": 4}
+    "solo": {"name": "One-on-One", "capacity": 1},
+    "group": {"name": "Group Activity", "capacity": 3}
 }
 
 personal = {
-    "resting": {"name": "Resting"},
-    "reading": {"name": "Reading"},
+    "rest": {"name": "Resting"},
+    "read": {"name": "Reading"},
     "practice": {"name": "Practicing Skills"},
-    "eating": {"name": "Eating Out"},
-    "traveling": {"name": "Traveling"}
+    "eat": {"name": "Eating Out"},
+    "travel": {"name": "Traveling"}
 }
 
 calendar = {
@@ -267,30 +269,58 @@ calendar = {
     ]
 }
 
-encode = ['0','1','2','3','4','5','6','7','8','9',
-          'A','B','C','D','E','F','G','H','I','J',
-          'K','L','M','N','O','P','Q','R','S','T',
-          'U','V','W','X','Y','Z','a','b','c','d',
-          'e','f','g','h','i','j','k','l','m','n',
-          'o','p','q','r','s','t','u','v','w','x',
-          'y','z','!',"@","#","$","%","^","&","*",
-          "(",")","-","_","=","+","[","]","{","}",
-          "|",";",":","'",'"',",","<",">","/","?",
-          "~","`","\\","\"","'"]
+encode = {0:'0',1:'1',2:'2',3:'3',4:'4',5:'5',6:'6',7:'7',8:'8',9:'9',
+          10:'A',11:'B',12:'C',13:'D',14:'E',15:'F',16:'G',17:'H',18:'I',19:'J',
+          20:'K',21:'L',22:'M',23:'N',24:'O',25:'P',26:'Q',27:'R',28:'S',29:'T',
+          30:'U',31:'V',32:'W',33:'X',34:'Y',35:'Z',36:'a',37:'b',38:'c',39:'d',
+          40:'e',41:'f',42:'g',43:'h',44:'i',45:'j',46:'k',47:'l',48:'m',49:'n',
+          50:'o',60:'p',70:'q',80:'r',90:'s',100:'t',110:'u',120:'v',130:'w',140:'x',
+          150:'y',160:'z',170:'!',180:"@",190:"#",200:"$",210:"%",220:"^",230:"&",240:"*",
+          250:"(",260:")",270:"-",280:"_",290:"=",300:"+"}
 
 decode = {'0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,
           'A':10,'B':11,'C':12,'D':13,'E':14,'F':15,'G':16,'H':17,'I':18,'J':19,
           'K':20,'L':21,'M':22,'N':23,'O':24,'P':25,'Q':26,'R':27,'S':28,'T':29,
           'U':30,'V':31,'W':32,'X':33,'Y':34,'Z':35,'a':36,'b':37,'c':38,'d':39,
           'e':40,'f':41,'g':42,'h':43,'i':44,'j':45,'k':46,'l':47,'m':48,'n':49,
-          'o':50,'p':51,'q':52,'r':53,'s':54,'t':55,'u':56,'v':57,'w':58,'x':59,
-          'y':60,'z':61,'!':62,"@":63,"#":64,"$":65,"%":66,"^":67,"&":68,"*":69,
-          "(":70,")":71,"-":72,"_":73,"=":74,"+":75,"[":76,"]":77,"{":78,"}":79,
-          "|":80,";":81,":":82,"'":83,'"':84,",":85,"<":86,">":87,"/":88,"?":89,
-          "~":90,"`":91,"\\":92,"\"":93,"'":94}
+          'o':50,'p':60,'q':70,'r':80,'s':90,'t':100,'u':110,'v':120,'w':130,'x':140,
+          'y':150,'z':160,'!':170,"@":180,"#":190,"$":200,"%":210,"^":220,"&":230,"*":240,
+          "(":250,")":260,"-":270,"_":280,"=":290,"+":300}
 
+# encode = ['0','1','2','3','4','5','6','7','8','9',
+#           'A','B','C','D','E','F','G','H','I','J',
+#           'K','L','M','N','O','P','Q','R','S','T',
+#           'U','V','W','X','Y','Z','a','b','c','d',
+#           'e','f','g','h','i','j','k','l','m','n',
+#           'o','p','q','r','s','t','u','v','w','x',
+#           'y','z','!',"@","#","$","%","^","&","*",
+#           "(",")","-","_","=","+","[","]","{","}",
+#           "|",";",":","'",'"',",","<",">","/","?",
+#           "~","`","\\","\"","'"]
 
+# decode = {'0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,
+#           'A':10,'B':11,'C':12,'D':13,'E':14,'F':15,'G':16,'H':17,'I':18,'J':19,
+#           'K':20,'L':21,'M':22,'N':23,'O':24,'P':25,'Q':26,'R':27,'S':28,'T':29,
+#           'U':30,'V':31,'W':32,'X':33,'Y':34,'Z':35,'a':36,'b':37,'c':38,'d':39,
+#           'e':40,'f':41,'g':42,'h':43,'i':44,'j':45,'k':46,'l':47,'m':48,'n':49,
+#           'o':50,'p':51,'q':52,'r':53,'s':54,'t':55,'u':56,'v':57,'w':58,'x':59,
+#           'y':60,'z':61,'!':62,"@":63,"#":64,"$":65,"%":66,"^":67,"&":68,"*":69,
+#           "(":70,")":71,"-":72,"_":73,"=":74,"+":75,"[":76,"]":77,"{":78,"}":79,
+#           "|":80,";":81,":":82,"'":83,'"':84,",":85,"<":86,">":87,"/":88,"?":89,
+#           "~":90,"`":91,"\\":92,"\"":93,"'":94}
 
+cdict = {'0': "sciences", '1': "humanities", '2': "com_skills", 
+         '3': "visual_art", '4': "music", '5': "perform", '6': "poetry",
+         '7': "health", '8': "cooking", '9': "mechanics", 'A': "oral_com",
+         "sciences": '0', "humanities": '1', "com_skills": '2', 
+         "visual_art": '3', "music": '4', "perform": '5', "poetry": '6', 
+         "health": '7', "cooking": '8', "mechanics": '9', "oral_com": 'A'}
+
+edict = {'0':"soccer", '1': "staff", '2': "debate", '3': "band", 
+         '4': "mancala", '5': "theater", '6': "art_club", '7': "animal_science", 
+         '8': "service", '9': "newspaper", "soccer": '0', "staff": '1', 
+         "debate": '2', "band": '3', "mancala": '4', "theater": '5', 
+         "art_club": '6', "animal_science": '7', "service": '8', "newspaper": '9'}
 
 # time = {"total_week": 1, "year": 1983, "month": 8, "day": 1, "sc_index": 0}
 

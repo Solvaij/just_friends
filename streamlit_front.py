@@ -1,93 +1,381 @@
 import streamlit as st
+import math
+
+from game import Game, Player, Time, Student
+import static
+
 
 if "page" not in st.session_state:
-    st.session_state.page = 0
+    st.session_state.page = "main"
 
-placeholder = st.empty()
+if "game" not in st.session_state:
+    st.session_state.game = Game()
 
-def mainbutton(): st.session_state.page = 0
-def contbutton(): st.session_state.page = 1
-def newbutton(): st.session_state.page = 2
-def loadbutton(): st.session_state.page = 3
+g = st.session_state.game
 
-if st.session_state.page == 0:
-    with placeholder.container():
-        st.header(f"Just Friends")
-        st.button("Continue",on_click=contbutton,disabled=(True))
-        st.button("New Game",on_click=newbutton)
-        st.button("Load Game",on_click=loadbutton)
+def update(g): st.session_state.game = g
+
+def goto(page): st.session_state.page = page
+
+format_dict = {
+    "sciences": "Science", 
+    "humanities": "Humanities", 
+    "com_skills": "Commercial Skills",
+    "fine_arts": "Fine Arts",
+    "life_skills": "Life Skills",
+    "visual_art": "Visual Arts",
+    "music": "Music",
+    "perform": "Performing Arts",
+    "poetry": "Poetry",
+    "health": "Health and Fitness",
+    "cooking": "Food and Nutrition",
+    "mechanics": "Crafting and Mechanics",
+    "oral_com": "Oral Communication",
+    "animal_science": "Animal Science Club", 
+    "soccer": "Football / Soccer", 
+    "staff": "Staff Fencing",
+    "debate": "Debate Team", 
+    "band": "Marching Band", 
+    "mancala": "Mancala Club", 
+    "theater": "Theater", 
+    "art_club": "Art Club", 
+    "service": "Volunteer Service Club", 
+    "newspaper": "School Newspaper",
+    "school": "Social at School",
+    "solo": "One-on-One",
+    "group": "Group Activity",
+    "resting": "Resting",
+    "reading": "Reading",
+    "practice": "Practicing Skills",
+    "eating": "Eating Out",
+    "traveling": "Traveling",
+    "dropout": "Dropout Boy",
+    "jock": "Jock Girl",
+    "rich": "Rich Boy",
+    "stuco": "StuCo Girl",
+    "nerd": "Band Boy",
+    "engineer": "Nerd Girl",
+    "theater": "Theater Boy",
+    "art": "Art Girl",
+    "rival": "Rival Sydney",
+    "mom": "Mom",
+    "dad": "Dad",
+    "brother": "Younger Brother",
+    "granny": "Granny Bea",
+    "sister": "Elder Sister",
+    "homeroom": "Homeroom Teacher",
+    "sponsor": "Newspaper Sponsor"
+}
+
+def initialize_new_game(input_data):
+    ply = Player()
+    ply.name = input_data[0]
+    ply.att = input_data[1]
+    ply.initialize_skills()
+    ply.curriculum = input_data[2]
+    ply.art_elective = input_data[3]
+    ply.life_elective = input_data[4]
+    ply.extracurriculars = input_data[5]
+    return ply
+
+def make_save_string(ply, week):
+    save_string = ""
+    # week
+    if week < 10:
+        save_string = save_string + '0' + str(week)
+    else:
+        save_string = save_string + static.encode[int(str(week)[0:-1])] + str(week)[-1]
+    # attributes
+    for a in ply.att:
+        save_string = save_string + static.encode[ply.att[a]]
+    # skills
+    for s in ply.skills:
+        save_string = save_string + static.encode[(math.floor(ply.skills[s]/10)*10)]
+    # curriculum
+    save_string = save_string + static.cdict[ply.curriculum] + static.cdict[ply.art_elective] + static.cdict[ply.life_elective]
+    # class scores
+    for cs in ply.class_scores:
+        save_string = save_string + static.encode[(math.floor(ply.class_scores[cs]/10)*10)]
+    # class scores quarter
+    for csq in ply.class_scores_quarter:
+        save_string = save_string + static.encode[(math.floor(ply.class_scores_quarter[csq]/10)*10)]
+    # class grades
+    for cg in ply.class_grades:
+        save_string = save_string + static.encode[ply.class_grades[cg]]
+    # rapport
+    for r in ply.rapport:
+        save_string = save_string + static.encode[(math.floor(ply.rapport[r]/10)*10)]
+    # number of extracurriculars
+    save_string = save_string + static.encode[len(ply.extracurriculars)]
+    # extracurriculars
+    for e in ply.extracurriculars:
+        save_string = save_string + static.edict[e]
+    # club ranks
+    for cr in ply.club_ranks:
+        save_string = save_string + static.encode[ply.club_ranks[cr]]
+    # length of name
+    save_string = save_string + static.encode[len(ply.name)]
+    # name
+    save_string = save_string + ply.name
+    return save_string
+
+def load_save_string(student_string):
+    ply = Player()
+    week = 1
+    # week
+    week = static.decode[student_string[0]] * 10 + int(student_string[1])
+    # attributes
+    index = 0
+    for at in ply.att:
+        ply.att[at] = static.decode[student_string[2 + index]]
+        index += 1
+    # skills
+    index = 0
+    for sk in ply.skills:
+        ply.skills[sk] = static.decode[student_string[6 + index]]
+        index += 1
+    # curriculum
+    ply.curriculum = static.cdict[student_string[26]]
+    ply.art_elective = static.cdict[student_string[27]]
+    ply.life_elective = static.cdict[student_string[28]]
+    # class scores
+    index = 0
+    for cs in ply.class_scores:
+        ply.class_scores[cs] = static.decode[student_string[29 + index]]
+        index += 1
+    # class scores quarter
+    index = 0
+    for csq in ply.class_scores_quarter:
+        ply.class_scores_quarter[csq] = static.decode[student_string[34 + index]]
+        index += 1
+    # class grades
+    index = 0
+    for cg in ply.class_grades:
+        ply.class_grades[cg] = static.decode[student_string[39 + index]]
+        index += 1
+    # rapport
+    index = 0
+    for r in ply.rapport:
+        ply.rapport[r] = static.decode[student_string[44 + index]]
+        index += 1
+    # number of extracurriculars
+    num_extracurriculars = static.decode[student_string[60]]
+    # extracurriculars
+    ply.extracurriculars = []
+    for i in range(num_extracurriculars):
+        ply.extracurriculars.append(static.edict[student_string[61 + i]])
+    # club ranks
+    index = 0
+    for cr in ply.club_ranks:
+        ply.club_ranks[cr] = static.decode[student_string[61 + num_extracurriculars + index]]
+        index += 1
+    # length of name
+    name_length = static.decode[student_string[61 + 2 * num_extracurriculars]]
+    # name
+    for i in range(name_length):
+        ply.name += student_string[62 + 2 * num_extracurriculars + i]
+    return ply, week
 
 
 
-def load_student_string(student_string):
-    st.session_state.page = 4
-
-
-
-def cont_game():
-    pass
-
-if st.session_state.page == 1:
-    placeholder.text(f"Continue your local save:")
-
-
-
+def main_menu():
+    st.header(f"Just Friends")
+    st.button("New Game",on_click=goto, args=["new"])
+    st.button("Load Game",on_click=goto, args=["load"])
+ 
 def new_game():
-    pass
-
-def valid_student():
-    return True
-
-if st.session_state.page == 2:
-    with placeholder.container():
+    g = Game()
+    with st.form("enrollment"):
         st.header(f"ENROLLMENT FORM")
-        with st.form("admission"):
-            st.header("Curriculum")
+        # name = st.text_input("Name: ")
 
-            core = st.radio("Core Curriculum:", ["Science", "Humanities", "Commercial Skills"])
-            art = st.radio("Fine Arts Elective:", ["Visual Art", "Music", "Performing Arts", "Poetry"])
-            life = st.radio("Life Skills Elective:", ["Health and Fitness", "Food and Nutrition", "Mechanics and Handicraft", "Oral Communication"])
+        st.subheader("Curriculum")
 
-            electives = st.pills("Electives (Choose 1-3)", ["Animal Science Club", "Soccer", "Staff Fencing", "Debate Club", "Marching Band", "Mancala Club", "Theater", "Art Club", "Service Club", "Newspaper"], selection_mode="multi")
+        core = st.radio("Core Curriculum:", ["sciences", "humanities", "com_skills"], format_func=lambda x: format_dict[x])
+        art = st.radio("Fine Arts Elective:", ["visual_art", "music", "perform", "poetry"], format_func=lambda x: format_dict[x])
+        life = st.radio("Life Skills Elective:", ["health", "cooking", "mechanics", "oral_com"], format_func=lambda x: format_dict[x])
 
-            st.header("Annual Physical")
-            body = st.slider("Body: ",1,7)
-            eyes = st.slider("Eyes: ",1,7)
-            mind = st.slider("Mind: ",1,7)
-            heart = st.slider("Heart: ",1,7)
+        extracurriculars = st.pills("Electives (Choose 1-3)", ["animal_science", "soccer", "staff", "debate", "band", "mancala", "theater", "art_club", "service", "newspaper"], selection_mode="multi", format_func=lambda x: format_dict[x])
+        att = {"body": 1, "eyes": 1, "mind": 1, "heart": 1}
+        st.subheader("Annual Physical (Total of 14)")
+        att["body"] = st.slider("Body: ",1,7)
+        att["eyes"] = st.slider("Eyes: ",1,7)
+        att["mind"] = st.slider("Mind: ",1,7)
+        att["heart"] = st.slider("Heart: ",1,7)
+        phys_total = sum(att.values())
+        st.write(f"Total: {phys_total}")
 
-            st.write("Special Notes: Patient’s behavioral health scores indicate moderate to severe depression in line with failure to complete spring coursework. Treatment ongoing. Recommended for special permission to resit Year 10 National Exams on medical grounds.")
-            
-            submitted = st.form_submit_button("Submit")
-            if submitted:
-                st.write("Core Curriculum: ", core)
-                st.write("Art Elective: ", art)
-                st.write("Life Skills Elective: ", life, "\n")
-                st.write("Extracurriculars: ", str(electives), "\n")
-                st.write("Body: ", str(body), "Eyes: ", str(eyes), "Mind: ", str(mind), "Heart ", str(heart), "\n")
+        st.write("Special Notes: Patient's behavioral health scores indicate moderate to severe depression in line with failure to complete spring coursework. Treatment ongoing. Recommended for special permission to resit Year 10 National Exams on medical grounds.")
 
-        student_string = ""
-        st.button("Confirm",on_click=load_student_string(student_string),disabled=(not valid_student()))
-
+        submitted = st.form_submit_button("Submit")
+        # disabled=(phys_total != 14)
+        if submitted:
+            g.ply = initialize_new_game(["Rowan", att, core, art, life, extracurriculars])
+            update(g)
+            goto("loop")
+            st.rerun()
+    
+    st.button("Main",on_click=goto, args=["main"], key="main_new")
 
 def load_game():
-    pass
+    st.header("LOAD GAME")
+    save_string = st.text_input("Please paste your save string in the box!")
+    submitted = st.button("Submit")
+    if submitted:
+        if len(save_string) < 73:
+            st.error("Save string is too short!")
+        else:
+            ply, w = load_save_string(save_string)
+            g.ply = ply
+            g.t.load_time(w)
+            update(g)
+            goto("loop")
+            st.rerun()
+    st.button("Main",on_click=goto, args=["main"], key="main_load")
 
-if st.session_state.page == 3:
-    with placeholder.container():
-        st.header(f"Load GAME")
-        st.text("Enter your save string: ")
+core_format_dict = {
+    'sciences': 'Coursework: Sciences',
+    'humanities': 'Coursework: Humanities',
+    'com_skills': 'Coursework: Commercial Skills',
+    'fine_arts': 'Coursework: Fine Arts',
+    'life_skills': 'Coursework: Life Skills',
+    "animal_science": "Extracurricular: Animal Science",
+    "soccer": "Extracurricular: Soccer",
+    "staff": "Extracurricular: Staff Fencing",
+    "debate": "Extracurricular: Debate Team",
+    "band": "Extracurricular: Marching Band",
+    "mancala": "Extracurricular: Mancala Club",
+    "theater": "Extracurricular: Theater",
+    "art_club": "Extracurricular: Art Club",
+    "service": "Extracurricular: Volunteer Service Club",
+    "newspaper": "Extracurricular: School Newspaper",
+    "rest": "Personal: Rest",
+    "practice": "Personal: Practice Skills",
+    "school": "Social: Be Personable (School)",
+    "group": "Social: Group",
+    "solo": "Social: One-on-One"
+}
+
+def core_loop():
+    options = ['sciences',
+                'humanities',
+                'com_skills',
+                'fine_arts',
+                'life_skills',
+                'rest',
+                'practice',
+                'school'
+                ]
+    group_ready = set()
+    solo_ready = set()
+    for friend in g.ply.rapport:
+        if g.ply.rapport[friend] > 2:
+            group_ready.add(friend)
+        if g.ply.rapport[friend] > 4:
+            solo_ready.add(friend)
+    if len(group_ready) > 1:
+        options.append('group')
+    if len(solo_ready) > 0:
+        options.append('solo')
+    for ec in g.ply.extracurriculars:
+        options.append(ec)
+
+    with st.sidebar:
+        st.header("Menu")
+        st.write(f"{static.calendar["month_names"][g.t.month]} {str(g.t.day)}, {str(g.t.year)}")
+        quarter = static.calendar["school"][g.t.sc_index]
+        st.write(f"{quarter["quarter"].capitalize()} Quarter, {quarter["semester"].capitalize()} Year {quarter["school_year"]}")
+        st.divider()
+        tab1, tab2, tab3, tab4 = st.tabs([g.ply.name, "Enrollment", "Rapport", "Quit"])
+        with tab1:
+            st.subheader("Attributes")
+            with st.container(horizontal = True):
+                st.write("Body: " + str(g.ply.att["body"]))
+                st.write("Eyes: " + str(g.ply.att["eyes"]))
+                st.write("Mind: " + str(g.ply.att["mind"]))
+                st.write("Heart: " + str(g.ply.att["heart"]))
+            st.divider()
+            st.subheader("Skills:")
+            with st.container(horizontal = True):
+                for s in g.ply.skills:
+                    st.write(str(s).capitalize() + ": " + str(math.floor(g.ply.skills[s]/10)))
+        with tab2:
+            st.subheader("Course Grades")
+            with st.container(horizontal = True):
+                for c in g.ply.class_grades:
+                    if c == "fine_arts":
+                        st.write(format_dict[g.ply.art_elective] + ": " + str(g.ply.class_grades[c]))
+                    elif c == "life_skills":
+                        st.write(format_dict[g.ply.life_elective] + ": " + str(g.ply.class_grades[c]))
+                    else:
+                        st.write(format_dict[c] + ": " + str(g.ply.class_grades[c]))
+            st.divider()
+            st.subheader("Extracurriculars")
+            for e in g.ply.extracurriculars:
+                st.write(format_dict[e] + ": Rank " + str(g.ply.club_ranks[e]))
+        with tab3:
+            with st.container(horizontal = True):
+                for f in g.ply.rapport:
+                    st.write(format_dict[f] + ": " + str(math.floor(g.ply.rapport[f]/10)))
+        with tab4:
+            st.button("Quit to Main Menu",on_click=goto, args=["main"])
+            st.write("BE SURE TO COPY YOUR SAVE!")
+        st.divider()
+
+    st.header(f"Week {g.t.total_week}")
+    weekly_plan = st.multiselect("Select 3 things to focus on this week",
+                            options,
+                            max_selections=3,
+                            format_func=lambda x: core_format_dict[x]
+                            )
+    friends = []
+    parameter = ""
+    for task in weekly_plan:
+        if task == "group":
+            friends = st.multiselect(f"{format_dict[task]} with whom?", group_ready, max_selections=static.social["group"]["capacity"], format_func=lambda x: format_dict[x])
+        elif task == "solo":
+            friends = [st.selectbox(f"{format_dict[task]} with whom?", solo_ready, format_func=lambda x: format_dict[x])]
+        elif task == "practice":
+            parameter = st.selectbox(f"Practice which skill?", g.ply.skills, format_func=lambda x: x.capitalize())
+    submitted = st.button("Advance",disabled=((len(weekly_plan)<3) or (("group" in weekly_plan or "solo" in weekly_plan) and len(friends) == 0)))
+    if submitted:
+        for task in weekly_plan:
+            if task in static.courses:
+                g.advance_course(task)
+                update(g)
+            elif task in static.extracurriculars:
+                g.advance_extracurricular(task)
+                update(g)
+            elif task in static.social:
+                g.advance_social(task, friends)
+                update(g)
+            elif task in static.personal:
+                g.advance_personal(task, parameter)
+                update(g)
+        g.t.advance_time()
+        update(g)
+        st.rerun()
+    save = make_save_string(g.ply, g.t.total_week)
+    st.write("Copy your save below to preserve current progress!")
+    st.code(save, wrap_lines=True)
 
 
-def loop():
-    pass
 
-if st.session_state.page == 4:
-    placeholder.text(f"Welcome to the main game loop.")
+if st.session_state.page == "loop":
+    core_loop()
+elif st.session_state.page == "new":
+    new_game()
+elif st.session_state.page == "load":
+    load_game()
+elif st.session_state.page == "main":
+    main_menu()
 
 
 
-st.button("Main Menu",on_click=mainbutton,disabled=(st.session_state.page == 0))
+
+
+# 015432ttssrrqqrrqqppppooee25800000000005555500Veopo0000000031890000000005Rowan
+
 
 
 
