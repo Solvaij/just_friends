@@ -180,45 +180,47 @@ def load_save_string(student_string):
 
 def main_menu():
     st.header(f"Just Friends")
-    st.button("New Game",on_click=goto, args=["new"])
-    st.button("Load Game",on_click=goto, args=["load"])
- 
+    with st.container(horizontal=True):
+        st.button("New Game",on_click=goto, args=["new"])
+        st.button("Load Game",on_click=goto, args=["load"])
+
 def new_game():
     g = Game()
-    with st.form("enrollment"):
+    with st.container(horizontal=True):
         st.header(f"ENROLLMENT FORM")
-        # name = st.text_input("Name: ")
+        st.button("Back to Main",on_click=goto, args=["main"], key="main_new")
+    # name = st.text_input("Name: ")
 
-        st.subheader("Curriculum")
+    st.subheader("Curriculum")
 
-        core = st.radio("Core Curriculum:", ["sciences", "humanities", "com_skills"], format_func=lambda x: format_dict[x])
-        art = st.radio("Fine Arts Elective:", ["visual_art", "music", "perform", "poetry"], format_func=lambda x: format_dict[x])
-        life = st.radio("Life Skills Elective:", ["health", "cooking", "mechanics", "oral_com"], format_func=lambda x: format_dict[x])
+    core = st.radio("Core Curriculum:", ["sciences", "humanities", "com_skills"], format_func=lambda x: format_dict[x])
+    art = st.radio("Fine Arts Elective:", ["visual_art", "music", "perform", "poetry"], format_func=lambda x: format_dict[x])
+    life = st.radio("Life Skills Elective:", ["health", "cooking", "mechanics", "oral_com"], format_func=lambda x: format_dict[x])
 
-        extracurriculars = st.pills("Electives (Choose 1-3)", ["animal_science", "soccer", "staff", "debate", "band", "mancala", "theater", "art_club", "service", "newspaper"], selection_mode="multi", format_func=lambda x: format_dict[x])
-        att = {"body": 1, "eyes": 1, "mind": 1, "heart": 1}
-        st.subheader("Annual Physical (Total of 14)")
-        att["body"] = st.slider("Body: ",1,7)
-        att["eyes"] = st.slider("Eyes: ",1,7)
-        att["mind"] = st.slider("Mind: ",1,7)
-        att["heart"] = st.slider("Heart: ",1,7)
-        phys_total = sum(att.values())
-        st.write(f"Total: {phys_total}")
+    extracurriculars = st.pills("Electives (Choose 1-3)", ["animal_science", "soccer", "staff", "debate", "band", "mancala", "theater", "art_club", "service", "newspaper"], selection_mode="multi", format_func=lambda x: format_dict[x])
+    att = {"body": 1, "eyes": 1, "mind": 1, "heart": 1}
+    st.subheader("Annual Physical")
+    att["body"] = st.slider("Body: ",1,7)
+    att["eyes"] = st.slider("Eyes: ",1,7)
+    att["mind"] = st.slider("Mind: ",1,7)
+    att["heart"] = st.slider("Heart: ",1,7)
+    total = sum(att.values())
+    st.write(f"Points Remaining: {14 - total}")
 
-        st.write("Special Notes: Patient's behavioral health scores indicate moderate to severe depression in line with failure to complete spring coursework. Treatment ongoing. Recommended for special permission to resit Year 10 National Exams on medical grounds.")
+    st.write("Special Notes: Patient's behavioral health scores indicate moderate to severe depression in line with failure to complete spring coursework. Treatment ongoing. Recommended for special permission to resit Year 10 National Exams on medical grounds.")
 
-        submitted = st.form_submit_button("Submit")
-        # disabled=(phys_total != 14)
-        if submitted:
-            g.ply = initialize_new_game(["Rowan", att, core, art, life, extracurriculars])
-            update(g)
-            goto("loop")
-            st.rerun()
-    
-    st.button("Main",on_click=goto, args=["main"], key="main_new")
+    submitted = st.button("Submit", disabled=(total != 14))
+    if submitted:
+        g.ply = initialize_new_game(["Rowan", att, core, art, life, extracurriculars])
+        update(g)
+        goto("loop")
+        st.rerun()
+
 
 def load_game():
-    st.header("LOAD GAME")
+    with st.container(horizontal=True):
+        st.header("LOAD GAME")
+        st.button("Back to Main",on_click=goto, args=["main"], key="main_new")
     save_string = st.text_input("Please paste your save string in the box!")
     submitted = st.button("Submit")
     if submitted:
@@ -231,7 +233,7 @@ def load_game():
             update(g)
             goto("loop")
             st.rerun()
-    st.button("Main",on_click=goto, args=["main"], key="main_load")
+
 
 core_format_dict = {
     'sciences': 'Coursework: Sciences',
@@ -312,11 +314,11 @@ def core_loop():
             st.divider()
             st.subheader("Extracurriculars")
             for e in g.ply.extracurriculars:
-                st.write(format_dict[e] + ": Rank " + str(g.ply.club_ranks[e]))
+                st.write(f"{format_dict[e]}: Rank {str(math.floor(g.ply.club_ranks[e]/10))}")
         with tab3:
             with st.container(horizontal = True):
                 for f in g.ply.rapport:
-                    st.write(format_dict[f] + ": " + str(math.floor(g.ply.rapport[f]/10)))
+                    st.write(f"{format_dict[f]}: " + str(math.floor(g.ply.rapport[f]/10)))
         with tab4:
             st.button("Quit to Main Menu",on_click=goto, args=["main"])
             st.write("BE SURE TO COPY YOUR SAVE!")
@@ -341,7 +343,12 @@ def core_loop():
     if submitted:
         for task in weekly_plan:
             if task in static.courses:
-                g.advance_course(task)
+                course = task
+                if task == "fine_arts":
+                    course = g.ply.art_elective
+                elif task == "life_skills":
+                    course = g.ply.life_elective
+                g.advance_course(course)
                 update(g)
             elif task in static.extracurriculars:
                 g.advance_extracurricular(task)
@@ -352,14 +359,16 @@ def core_loop():
             elif task in static.personal:
                 g.advance_personal(task, parameter)
                 update(g)
-        g.t.advance_time()
-        update(g)
+        if g.t.total_week < 105:
+            g.t.advance_time()
+            g.update_grades()
+            update(g)
+        else:
+            st.header("CONGRATULATIONS! You have graduated and reached the end of the game!")
         st.rerun()
     save = make_save_string(g.ply, g.t.total_week)
     st.write("Copy your save below to preserve current progress!")
     st.code(save, wrap_lines=True)
-
-
 
 if st.session_state.page == "loop":
     core_loop()
@@ -371,11 +380,11 @@ elif st.session_state.page == "main":
     main_menu()
 
 
-
+with st.bottom:
+    st.caption("Just Friends v 0.0.1.1")
 
 
 # 015432ttssrrqqrrqqppppooee25800000000005555500Veopo0000000031890000000005Rowan
-
 
 
 

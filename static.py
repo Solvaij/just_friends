@@ -36,8 +36,8 @@ courses = {
     "cooking": {"name": "Food and Nutrition", "skills": ["cooking", "comfort"], "alts": {"ck", "cooking", "fn", "food", "nutrition", "food_and_nutrition"}, "index": "cooking"},
     "mechanics": {"name": "Crafting and Mechanics", "skills": ["making", "instinct"], "alts": {"mc", "mech", "craft", "autos", "mechanics", "crafting_mechanics", "crafting mechanics", "craft_mech", "crafting_and_mechanics"}, "index": "mechanics"},
     "oral_com": {"name": "Oral Communication", "skills": ["persuasion", "composure"], "alts": {"oc", "oral_com", "oral com", "com", "communication", "oral_communication", "oral communication"}, "index": "oral_com"},
-    "fine_art": {},
-    "life_skills": {}
+    "fine_arts": {"name": "Fine Arts"},
+    "life_skills": {"name": "Life Skills"}
 }
 
 extracurriculars = {

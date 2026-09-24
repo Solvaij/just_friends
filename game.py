@@ -117,6 +117,7 @@ class Player():
             "willpower": (self.att["heart"]+self.att["heart"])*10
         }
 
+
 class Time():
     def __init__(self):
         self.total_week = 1
@@ -149,6 +150,7 @@ class Time():
         elif (self.month > int(end_month)) or (self.month == int(end_month) and self.day > int(end_day)):
             self.sc_index += 1
 
+
 class Student():
     def __init__(self, name, curriculum_track, art_elective, life_elective, extracurriculars):
         self.name = name
@@ -158,6 +160,7 @@ class Student():
         self.extracurriculars = extracurriculars
         self.rapport = 0
         self.rapport_rank = 0
+
 
 class Game():
     def __init__(self):
@@ -195,48 +198,11 @@ class Game():
             "band": {"nerd"},
             "mancala": {"engineer"},
             "theater": {"theater"},
-            "art": {"art"},
+            "art_club": {"art"},
             "animal_science": {"dropout"},
             "service": {"rival"},
             "newspaper": set()
         }
-
-    def advance(self, weekly_focus):
-        for focus in weekly_focus:
-            ftype = focus.split("-")[0]
-            findex = static.focus_codes[focus]
-            if ftype == "ed":
-                course = dict()
-                if findex == "fine_arts":
-                    course = static.courses[self.ply.art_elective]
-                elif findex == "life_skills":
-                    course = static.courses[self.ply.life_elective]
-                else:
-                    course = static.courses[findex]
-                print(f"Education focus selected: {course['name']}")
-                self.advance_course(course)
-            elif ftype == "ex":
-                exc = static.extracurriculars[findex]
-                print(f"Extracurricular focus selected: {exc['name']}")
-                self.advance_extracurricular(exc)
-            elif ftype == "so":
-                soc = static.social[findex]
-                print(f"Social focus selected: {soc['name']}")
-                self.advance_social(soc)
-            elif ftype == "pr":
-                per = static.personal[findex]
-                print(f"Personal focus selected: {per['name']}")
-                self.advance_personal(per)
-        for person in self.ply.rapport:
-            if person in self.students:
-                old_rap = self.students[person].rapport
-                new_rap = self.ply.rapport[person]
-                if new_rap > 200:
-                    new_rap = 200
-                if old_rap < new_rap:
-                    self.students[person].rapport = new_rap
-                    self.students[person].rapport_rank = math.floor(new_rap / 10)
-        self.t.advance_time()
 
     def advance_course(self, course):
         for character in self.course_enroll[course]:
@@ -253,15 +219,13 @@ class Game():
         elif course in ("visual_art", "music", "perform", "poetry"):
             self.ply.class_scores["fine_arts"] += 4
             self.ply.class_scores_quarter["fine_arts"] += 4
+            course = "fine_arts"
         elif course in ("health", "cooking", "mechanics", "oral_com"):
             self.ply.class_scores["life_skills"] += 4
             self.ply.class_scores_quarter["life_skills"] += 4
-        for course in self.ply.class_scores:
-            sc_index = self.t.sc_index
-            if static.calendar["school"][sc_index]["quarter"] in {"midterms", "finals", "exams"}:
-                self.ply.class_grades[course] = min(self.ply.class_scores_quarter[course], 5)
-            elif static.calendar["school"][sc_index-1]["quarter"] in {"midterms", "finals", "exams"}:
-                self.ply.class_scores_quarter[course] = 0
+            course = "life_skills"
+        if self.ply.class_scores[course] > 300:
+            self.ply.class_scores[course] = 300
 
     def advance_extracurricular(self, ec):
         for character in self.ec_enroll[ec]:
@@ -275,6 +239,9 @@ class Game():
                 self.ply.skills[skill] += 1
             if self.ply.skills[skill] > 300:
                 self.ply.skills[skill] = 300
+        self.ply.club_ranks[ec] += 1
+        if self.ply.club_ranks[ec] > 50:
+            self.ply.club_ranks[ec] = 50
 
     def advance_social(self, social, friends):
         if social == "school":
@@ -303,6 +270,15 @@ class Game():
                 self.ply.skills[skill] += 10
             if self.ply.skills[skill] > 300:
                 self.ply.skills[skill] = 300
+
+    def update_grades(self):
+        sc_index = self.t.sc_index
+        if static.calendar["school"][sc_index]["quarter"] in {"midterms", "finals", "exams"}:
+            for course in self.ply.class_scores:
+                self.ply.class_grades[course] = max(min(self.ply.class_scores_quarter[course], 5), 1)
+        elif static.calendar["school"][sc_index-1]["quarter"] in {"midterms", "finals", "exams"}:
+            for course in self.ply.class_scores:
+                self.ply.class_scores_quarter[course] = 0
 
 
 
