@@ -88,9 +88,9 @@ def make_save_string(ply, week):
     # attributes
     for a in ply.att:
         save_string = save_string + static.encode[ply.att[a]]
-    # skills
-    for s in ply.skills:
-        save_string = save_string + static.encode[(math.floor(ply.skills[s]/10)*10)]
+    # skills points
+    for s in ply.skill_points:
+        save_string = save_string + static.encode[(math.floor(ply.skill_points[s]/10)*10)]
     # curriculum
     save_string = save_string + static.cdict[ply.curriculum] + static.cdict[ply.art_elective] + static.cdict[ply.life_elective]
     # class scores
@@ -102,9 +102,9 @@ def make_save_string(ply, week):
     # class grades
     for cg in ply.class_grades:
         save_string = save_string + static.encode[ply.class_grades[cg]]
-    # rapport
-    for r in ply.rapport:
-        save_string = save_string + static.encode[(math.floor(ply.rapport[r]/10)*10)]
+    # rapport points
+    for r in ply.rapport_points:
+        save_string = save_string + static.encode[(math.floor(ply.rapport_points[r]/10)*10)]
     # number of extracurriculars
     save_string = save_string + static.encode[len(ply.extracurriculars)]
     # extracurriculars
@@ -129,10 +129,11 @@ def load_save_string(student_string):
     for at in ply.att:
         ply.att[at] = static.decode[student_string[2 + index]]
         index += 1
-    # skills
+    # skill points
     index = 0
-    for sk in ply.skills:
-        ply.skills[sk] = static.decode[student_string[6 + index]]
+    for sk in ply.skill_points:
+        ply.skill_points[sk] = static.decode[student_string[6 + index]]
+        ply.skills[sk] = math.floor(ply.skill_points[sk]/10)
         index += 1
     # curriculum
     ply.curriculum = static.cdict[student_string[26]]
@@ -155,8 +156,9 @@ def load_save_string(student_string):
         index += 1
     # rapport
     index = 0
-    for r in ply.rapport:
-        ply.rapport[r] = static.decode[student_string[44 + index]]
+    for r in ply.rapport_points:
+        ply.rapport_points[r] = static.decode[student_string[44 + index]]
+        ply.rapport[r] = math.floor(ply.rapport_points[r]/10)
         index += 1
     # number of extracurriculars
     num_extracurriculars = static.decode[student_string[60]]
@@ -427,7 +429,7 @@ elif st.session_state.page == "main":
 
 
 with st.bottom:
-    st.caption("Just Friends v 0.0.1.1")
+    st.caption("Just Friends v 0.0.2.1")
 
 
 # 015432ttssrrqqrrqqppppooee25800000000005555500Veopo0000000031890000000005Rowan
