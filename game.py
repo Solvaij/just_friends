@@ -6,6 +6,7 @@ import random
 import static
 
 
+
 class Player():
     def __init__(self):
         self.name = "Rowan"
@@ -37,24 +38,32 @@ class Player():
             "empathy": 1,
             "willpower": 1
         }
+        self.skill_points = {
+            "strength": 1,
+            "vigor": 1,
+            "acrobatics": 1,
+            "instinct": 1,
+            "body_mech": 1,
+            "cooking": 1,
+            "presence": 1,
+            "comfort": 1,
+            "motor_skill": 1,
+            "reaction": 1,
+            "perception": 1,
+            "making": 1,
+            "composure": 1,
+            "arts": 1,
+            "recall": 1,
+            "logic": 1,
+            "communication": 1,
+            "persuasion": 1,
+            "empathy": 1,
+            "willpower": 1
+        }
         self.curriculum = "com_skills"
         self.art_elective = "visual_art"
         self.life_elective = "health"
         self.extracurriculars = {}
-        self.class_scores = {
-            "sciences": 0,
-            "humanities": 0,
-            "com_skills": 0,
-            "fine_arts": 0,
-            "life_skills": 0
-        }
-        self.class_scores_quarter = {
-            "sciences": 0,
-            "humanities": 0,
-            "com_skills": 0,
-            "fine_arts": 0,
-            "life_skills": 0
-        }
         self.class_grades = {
             "sciences": 5,
             "humanities": 5,
@@ -62,7 +71,34 @@ class Player():
             "fine_arts": 5,
             "life_skills": 5
         }
+        self.class_points_quarter = {
+            "sciences": 0,
+            "humanities": 0,
+            "com_skills": 0,
+            "fine_arts": 0,
+            "life_skills": 0
+        }
+        self.class_points = {
+            "sciences": 0,
+            "humanities": 0,
+            "com_skills": 0,
+            "fine_arts": 0,
+            "life_skills": 0
+        }
+        self.exams_taken = 0
         self.club_ranks = {
+            "animal_science": 0,
+            "soccer": 0,
+            "staff": 0,
+            "debate": 0,
+            "band": 0,
+            "mancala": 0,
+            "theater": 0,
+            "art_club": 0,
+            "service": 0,
+            "newspaper": 0
+        }
+        self.club_points = {
             "animal_science": 0,
             "soccer": 0,
             "staff": 0,
@@ -92,9 +128,49 @@ class Player():
             "sponsor": 0,
             "homeroom": 0
         }
+        self.rapport_points = {
+            "dropout": 0,
+            "jock": 0,
+            "rich": 0,
+            "stuco": 0,
+            "nerd": 0,
+            "engineer": 0,
+            "theater": 0,
+            "art": 0,
+            "rival": 0,
+            "brother": 0,
+            "mom": 0,
+            "dad": 0,
+            "granny": 0,
+            "sister": 0,
+            "sponsor": 0,
+            "homeroom": 0
+        }
 
     def initialize_skills(self):
         self.skills = {
+            "strength": (self.att["body"]+self.att["body"]),
+            "vigor": (self.att["body"]+self.att["body"]),
+            "acrobatics": (self.att["body"]+self.att["eyes"]),
+            "instinct": (self.att["body"]+self.att["eyes"]),
+            "body_mech": (self.att["body"]+self.att["mind"]),
+            "cooking": (self.att["body"]+self.att["mind"]),
+            "presence": (self.att["body"]+self.att["heart"]),
+            "comfort": (self.att["body"]+self.att["heart"]),
+            "motor_skill": (self.att["eyes"]+self.att["eyes"]),
+            "reaction": (self.att["eyes"]+self.att["eyes"]),
+            "perception": (self.att["eyes"]+self.att["mind"]),
+            "making": (self.att["eyes"]+self.att["mind"]),
+            "composure": (self.att["eyes"]+self.att["heart"]),
+            "arts": (self.att["eyes"]+self.att["heart"]),
+            "recall": (self.att["mind"]+self.att["mind"]),
+            "logic": (self.att["mind"]+self.att["mind"]),
+            "communication": (self.att["mind"]+self.att["heart"]),
+            "persuasion": (self.att["mind"]+self.att["heart"]),
+            "empathy": (self.att["heart"]+self.att["heart"]),
+            "willpower": (self.att["heart"]+self.att["heart"])
+        }
+        self.skill_points = {
             "strength": (self.att["body"]+self.att["body"])*10,
             "vigor": (self.att["body"]+self.att["body"])*10,
             "acrobatics": (self.att["body"]+self.att["eyes"])*10,
@@ -117,49 +193,102 @@ class Player():
             "willpower": (self.att["heart"]+self.att["heart"])*10
         }
 
+    # Studying during the semester
+    # Overalll class score / previous grades
+    # Intelligence and class skills
+    # Test question answers
+    def update_grades(self, scores):
+        overall_cutoffs = {
+            "core": [2.2,1.1],
+            "other": [1.65,0.8],
+            "elective": [1.1,0.35]
+        }
+        final_cutoffs = {
+            "core": [20, 15, 10, 5],
+            "other": [15, 10, 7, 3],
+            "elective": [10, 6, 3, 2]
+        }
+        for course in self.class_points:
+            # setup
+            course_type = ""
+            course_name = course
+            if course == self.curriculum:
+                course_type = "core"
+            elif course == "fine_arts":
+                course_name = self.art_elective
+                course_type = "elective"
+            elif course == "life_skills":
+                course_name = self.life_elective
+                course_type = "elective"
+            else:
+                course_type = "other"
+            # Quarterly Studying
+            quarter_score = self.class_points_quarter[course]
+            # Overall Course Performance
+            if self.class_points[course] > overall_cutoffs[course_type][0]:
+                quarter_score += 2
+            elif self.class_points[course] > overall_cutoffs[course_type][1]:
+                quarter_score += 1
+            # Skills in Subject Area
+            for skill in static.courses[course_name]["skills"]:
+                if self.skills[skill] > 11+self.exams_taken:
+                    quarter_score += 1
+            # Exam Question Scores
+            quarter_score += scores[course]
+            # Final Grading
+            if quarter_score >= final_cutoffs[course_type][0]:
+                self.class_grades[course] = 5
+            elif quarter_score >= final_cutoffs[course_type][1]:
+                self.class_grades[course] = 4
+            elif quarter_score >= final_cutoffs[course_type][2]:
+                self.class_grades[course] = 3
+            elif quarter_score >= final_cutoffs[course_type][3]:
+                self.class_grades[course] = 2
+            else:
+                self.class_grades[course] = 1
+            # Reset quarterly score for next term
+            self.class_points_quarter[course] = 0
 
-class Time():
-    def __init__(self):
-        self.total_week = 1
-        self.year = 1983
-        self.month = 8
-        self.day = 1
-        self.sc_index = 0
+    def update_course(self, course, points):
+        if course in self.class_points:
+            self.class_points[course] = min(self.class_points[course] + points, 300)
+            self.class_points_quarter[course] = min(self.class_points_quarter[course] + points, 300)
+        else:
+            raise ValueError(f"No such course: '{course}'")
 
-    def load_time(self, wk):
-        while self.total_week < wk:
-            self.advance_time()
+    def update_skill(self, skill, points):
+        if skill in self.skills:
+            self.skill_points[skill] = min(self.skill_points[skill] + points, 300)
+            if self.skill_points[skill] >= (self.skills[skill]+1) * 10:
+                self.skills[skill] += 1
+                return True
+            else:
+                return False
+        else:
+            raise ValueError(f"No such skill: '{skill}'")
 
-    def advance_time(self):
-        self.total_week += 1
-        self.day += 7
-        days_this_month = static.calendar["month_days"][self.month]
-        if self.month == 2 and (self.year % 4 == 0 and (self.year % 100 != 0 or self.year % 400 == 0)):
-            days_this_month = 29
-        if self.day > days_this_month:
-            self.day -= days_this_month
-            self.month += 1
-            if self.month > 12:
-                self.month = 1
-                self.year += 1
-        sc_year = (static.calendar["school"][self.sc_index]["year"])
-        sc_end = static.calendar["school"][self.sc_index]["end_date"]
-        end_month, end_day = sc_end.split("-")
-        if int(end_month) == 1 and self.month == 12:
-            pass
-        elif (self.month > int(end_month)) or (self.month == int(end_month) and self.day > int(end_day)):
-            self.sc_index += 1
+    def update_club(self, club, points):
+        if club in self.club_ranks:
+            self.club_points[club] = min(self.club_points[club] + points, 50)
+            if self.club_points[club] >= (self.club_ranks[club]+1) * 10:
+                self.club_ranks[club] += 1
+                return True
+            else:
+                return False
+        else:
+            raise ValueError(f"No such club: '{club}'")
 
+    def update_rapport(self, person, points):
+        if person in self.rapport:
+            self.rapport_points[person] = min(self.rapport_points[person] + points, 200)
+            if self.rapport_points[person] >= (self.rapport[person]+1) * 10:
+                self.rapport[person] += 1
+                return True
+            else:
+                return False
+        else:
+            raise ValueError(f"No such person: '{person}'")
 
-class Student():
-    def __init__(self, name, curriculum_track, art_elective, life_elective, extracurriculars):
-        self.name = name
-        self.curriculum_track = curriculum_track
-        self.art_elective = art_elective
-        self.life_elective = life_elective
-        self.extracurriculars = extracurriculars
-        self.rapport = 0
-        self.rapport_rank = 0
 
 
 class Game():
@@ -205,80 +334,230 @@ class Game():
         }
 
     def advance_course(self, course):
-        for character in self.course_enroll[course]:
-            self.ply.rapport[character] += 1
-        for skill in static.courses[course]["skills"]:
-            self.ply.skills[skill] += 1
-        if course in ("sciences", "humanities", "com_skills"):
-            if self.ply.curriculum == course:
-                self.ply.class_scores[course] += 3
-                self.ply.class_scores_quarter[course] += 3
-            else:
-                self.ply.class_scores[course] += 2
-                self.ply.class_scores_quarter[course] += 2
-        elif course in ("visual_art", "music", "perform", "poetry"):
-            self.ply.class_scores["fine_arts"] += 4
-            self.ply.class_scores_quarter["fine_arts"] += 4
-            course = "fine_arts"
-        elif course in ("health", "cooking", "mechanics", "oral_com"):
-            self.ply.class_scores["life_skills"] += 4
-            self.ply.class_scores_quarter["life_skills"] += 4
-            course = "life_skills"
-        if self.ply.class_scores[course] > 300:
-            self.ply.class_scores[course] = 300
+        # setup
+        updated = {"rapport": set(), "skills": set(), "clubs": set()}
+        if course == "fine_arts":
+            course_name = self.ply.art_elective
+        elif course == "life_skills":
+            course_name = self.ply.life_elective
+        else:
+            course_name = course
+        # update rapport with classmates
+        for character in self.course_enroll[course_name]:
+            update = self.ply.update_rapport(character, 1)
+            if update:
+                updated["rapport"].add(character)
+        # update associated skills
+        for skill in static.courses[course_name]["skills"]:
+            update = self.ply.update_skill(skill, 1)
+            if update:
+                updated["skills"].add(skill)
+        # update course points
+        self.ply.update_course(course, 5)
+        # return updates
+        return updated
 
     def advance_extracurricular(self, ec):
+        # setup
+        updated = {"rapport": set(), "skills": set(), "clubs": set()}
+        # update rapport with club members
         for character in self.ec_enroll[ec]:
-            self.ply.rapport[character] += 1
+            update = self.ply.update_rapport(character, 1)
+            if update:
+                updated["rapport"].add(character)
+        # update associated skills
         skill_count = 0
         for skill in static.extracurriculars[ec]["skills"]:
             if skill_count < 2:
-                self.ply.skills[skill] += 2
+                update = self.ply.update_skill(skill, 2)
                 skill_count += 1
             else:
-                self.ply.skills[skill] += 1
-            if self.ply.skills[skill] > 300:
-                self.ply.skills[skill] = 300
-        self.ply.club_ranks[ec] += 1
-        if self.ply.club_ranks[ec] > 50:
-            self.ply.club_ranks[ec] = 50
+                update = self.ply.update_skill(skill, 1)
+            if update:
+                updated["skills"].add(skill)
+        # update club points
+        update = self.ply.update_club(ec, 1)
+        if update:
+            updated["clubs"].add(ec)
+        # return updates
+        return updated
 
     def advance_social(self, social, friends):
+        # setup
+        updated = {"rapport": set(), "skills": set(), "clubs": set()}
+        # update rapport for all classmates
         if social == "school":
             for character in self.students.keys():
-                self.ply.rapport[character] += 1
-                if self.ply.rapport[character] > 200:
-                    self.ply.rapport[character] = 200
+                update = self.ply.update_rapport(character, 1)
+                if update:
+                    updated["rapport"].add(character)
+        # update rapport for group
         elif social == "group":
             for student in friends:
-                self.ply.rapport[student] += 2
-                if self.ply.rapport[student] > 200:
-                    self.ply.rapport[student] = 200
+                update = self.ply.update_rapport(student, 2)
+                if update:
+                    updated["rapport"].add(student)
+        # update rapport with target
         elif social == "solo":
-            self.ply.rapport[friends[0]] += 5
-            if self.ply.rapport[friends[0]] > 200:
-                self.ply.rapport[friends[0]] = 200
+            update = self.ply.update_rapport(friends[0], 5)
+            if update:
+                updated["rapport"].add(friends[0])
+        # return updates
+        return updated
 
     def advance_personal(self, personal, parameter):
+        # setup
+        updated = {"rapport": set(), "skills": set(), "clubs": set()}
+        # update single skill
         if personal == "practice":
-            self.ply.skills[parameter] += 5
-            if self.ply.skills[parameter] > 300:
-                self.ply.skills[parameter] = 300
+            update = self.ply.update_skill(parameter, 5)
+            if update:
+                updated["skills"].add(parameter)
+        # update random skill through resting
         elif personal == "rest":
             skill = random.choice(list(self.ply.skills.keys()))
             if random.randint(1, 20) > math.floor(self.ply.skills[skill]/10):
-                self.ply.skills[skill] += 10
-            if self.ply.skills[skill] > 300:
-                self.ply.skills[skill] = 300
+                update = self.ply.update_skill(skill, 10)
+                if update:
+                    updated["skills"].add(skill)
+        # return updates
+        return updated
 
-    def update_grades(self):
+    def update_grades(self, scores):
         sc_index = self.t.sc_index
-        if static.calendar["school"][sc_index]["quarter"] in {"midterms", "finals", "exams"}:
-            for course in self.ply.class_scores:
-                self.ply.class_grades[course] = max(min(self.ply.class_scores_quarter[course], 5), 1)
-        elif static.calendar["school"][sc_index-1]["quarter"] in {"midterms", "finals", "exams"}:
-            for course in self.ply.class_scores:
-                self.ply.class_scores_quarter[course] = 0
+        school_blocks = static.calendar["school"]
+        if (school_blocks[sc_index-1]["quarter"] in {"midterms", "finals"}) and school_blocks[sc_index]["week"] == self.t.total_week:
+            self.ply.update_grades(scores)
+            return True
+        elif (school_blocks[sc_index-1]["quarter"] not in {"exams"}):
+            return False
+        else:
+            return False
+
+    # def advance_course(self, course):
+    #     for character in self.course_enroll[course]:
+    #         self.ply.rapport[character] += 1
+    #     for skill in static.courses[course]["skills"]:
+    #         self.ply.skills[skill] += 1
+    #     if course in ("sciences", "humanities", "com_skills"):
+    #         if self.ply.curriculum == course:
+    #             self.ply.class_points[course] += 3
+    #             self.ply.class_points_quarter[course] += 3
+    #         else:
+    #             self.ply.class_points[course] += 2
+    #             self.ply.class_points_quarter[course] += 2
+    #     elif course in ("visual_art", "music", "perform", "poetry"):
+    #         self.ply.class_points["fine_arts"] += 4
+    #         self.ply.class_points_quarter["fine_arts"] += 4
+    #         course = "fine_arts"
+    #     elif course in ("health", "cooking", "mechanics", "oral_com"):
+    #         self.ply.class_points["life_skills"] += 4
+    #         self.ply.class_points_quarter["life_skills"] += 4
+    #         course = "life_skills"
+    #     if self.ply.class_points[course] > 300:
+    #         self.ply.class_points[course] = 300
+
+    # def advance_extracurricular(self, ec):
+    #     for character in self.ec_enroll[ec]:
+    #         self.ply.rapport[character] += 1
+    #     skill_count = 0
+    #     for skill in static.extracurriculars[ec]["skills"]:
+    #         if skill_count < 2:
+    #             self.ply.skills[skill] += 2
+    #             skill_count += 1
+    #         else:
+    #             self.ply.skills[skill] += 1
+    #         if self.ply.skills[skill] > 300:
+    #             self.ply.skills[skill] = 300
+    #     self.ply.club_ranks[ec] += 1
+    #     if self.ply.club_ranks[ec] > 50:
+    #         self.ply.club_ranks[ec] = 50
+
+    # def advance_social(self, social, friends):
+    #     if social == "school":
+    #         for character in self.students.keys():
+    #             self.ply.rapport[character] += 1
+    #             if self.ply.rapport[character] > 200:
+    #                 self.ply.rapport[character] = 200
+    #     elif social == "group":
+    #         for student in friends:
+    #             self.ply.rapport[student] += 2
+    #             if self.ply.rapport[student] > 200:
+    #                 self.ply.rapport[student] = 200
+    #     elif social == "solo":
+    #         self.ply.rapport[friends[0]] += 5
+    #         if self.ply.rapport[friends[0]] > 200:
+    #             self.ply.rapport[friends[0]] = 200
+
+    # def advance_personal(self, personal, parameter):
+    #     if personal == "practice":
+    #         self.ply.skills[parameter] += 5
+    #         if self.ply.skills[parameter] > 300:
+    #             self.ply.skills[parameter] = 300
+    #     elif personal == "rest":
+    #         skill = random.choice(list(self.ply.skills.keys()))
+    #         if random.randint(1, 20) > math.floor(self.ply.skills[skill]/10):
+    #             self.ply.skills[skill] += 10
+    #         if self.ply.skills[skill] > 300:
+    #             self.ply.skills[skill] = 300
+
+    # def update_grades(self):
+    #     sc_index = self.t.sc_index
+    #     if static.calendar["school"][sc_index]["quarter"] in {"midterms", "finals", "exams"}:
+    #         for course in self.ply.class_points:
+    #             self.ply.class_grades[course] = max(min(self.ply.class_points_quarter[course], 5), 1)
+    #     elif static.calendar["school"][sc_index-1]["quarter"] in {"midterms", "finals", "exams"}:
+    #         for course in self.ply.class_points:
+    #             self.ply.class_points_quarter[course] = 0
+
+
+
+class Time():
+    def __init__(self):
+        self.total_week = 1
+        self.year = 1983
+        self.month = 8
+        self.day = 1
+        self.sc_index = 0
+
+    def load_time(self, wk):
+        while self.total_week < wk:
+            self.advance_time()
+
+    def advance_time(self):
+        self.total_week += 1
+        self.day += 7
+        days_this_month = static.calendar["month_days"][self.month]
+        if self.month == 2 and (self.year % 4 == 0 and (self.year % 100 != 0 or self.year % 400 == 0)):
+            days_this_month = 29
+        if self.day > days_this_month:
+            self.day -= days_this_month
+            self.month += 1
+            if self.month > 12:
+                self.month = 1
+                self.year += 1
+        if self.sc_index < len(static.calendar["school"]) - 1:
+            if self.total_week == static.calendar["school"][self.sc_index+1]["week"]:
+                self.sc_index += 1
+        # sc_year = (static.calendar["school"][self.sc_index]["year"])
+        # sc_end = static.calendar["school"][self.sc_index]["end_date"]
+        # end_month, end_day = sc_end.split("-")
+        # if int(end_month) == 1 and self.month == 12:
+        #     pass
+        # elif (self.month > int(end_month)) or (self.month == int(end_month) and self.day > int(end_day)):
+        #     self.sc_index += 1
+
+
+
+class Student():
+    def __init__(self, name, curriculum_track, art_elective, life_elective, extracurriculars):
+        self.name = name
+        self.curriculum_track = curriculum_track
+        self.art_elective = art_elective
+        self.life_elective = life_elective
+        self.extracurriculars = extracurriculars
+        self.rapport = 0
+        self.rapport_rank = 0
 
 
 

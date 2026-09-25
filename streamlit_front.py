@@ -94,11 +94,11 @@ def make_save_string(ply, week):
     # curriculum
     save_string = save_string + static.cdict[ply.curriculum] + static.cdict[ply.art_elective] + static.cdict[ply.life_elective]
     # class scores
-    for cs in ply.class_scores:
-        save_string = save_string + static.encode[(math.floor(ply.class_scores[cs]/10)*10)]
+    for cs in ply.class_points:
+        save_string = save_string + static.encode[(math.floor(ply.class_points[cs]/10)*10)]
     # class scores quarter
-    for csq in ply.class_scores_quarter:
-        save_string = save_string + static.encode[(math.floor(ply.class_scores_quarter[csq]/10)*10)]
+    for csq in ply.class_points_quarter:
+        save_string = save_string + static.encode[(math.floor(ply.class_points_quarter[csq]/10)*10)]
     # class grades
     for cg in ply.class_grades:
         save_string = save_string + static.encode[ply.class_grades[cg]]
@@ -140,13 +140,13 @@ def load_save_string(student_string):
     ply.life_elective = static.cdict[student_string[28]]
     # class scores
     index = 0
-    for cs in ply.class_scores:
-        ply.class_scores[cs] = static.decode[student_string[29 + index]]
+    for cs in ply.class_points:
+        ply.class_points[cs] = static.decode[student_string[29 + index]]
         index += 1
     # class scores quarter
     index = 0
-    for csq in ply.class_scores_quarter:
-        ply.class_scores_quarter[csq] = static.decode[student_string[34 + index]]
+    for csq in ply.class_points_quarter:
+        ply.class_points_quarter[csq] = static.decode[student_string[34 + index]]
         index += 1
     # class grades
     index = 0
@@ -200,10 +200,30 @@ def new_game():
     extracurriculars = st.pills("Electives (Choose 1-3)", ["animal_science", "soccer", "staff", "debate", "band", "mancala", "theater", "art_club", "service", "newspaper"], selection_mode="multi", format_func=lambda x: format_dict[x])
     att = {"body": 1, "eyes": 1, "mind": 1, "heart": 1}
     st.subheader("Annual Physical")
-    att["body"] = st.slider("Body: ",1,7)
-    att["eyes"] = st.slider("Eyes: ",1,7)
-    att["mind"] = st.slider("Mind: ",1,7)
-    att["heart"] = st.slider("Heart: ",1,7)
+
+    # presets
+    # athletic: 5,4,2,3  (6,5,1,2)
+    # studious: 2,3,5,4  (1,3,6,4)
+    # sociable: 4,3,2,5  (3,3,2,6)
+    # creative: 2,5,4,3  (1,6,4,3)
+    defaults = [1,1,1,1]
+    preset = st.segmented_control(
+        label="Presets:",
+        options=["athletic", "studious", "sociable", "creative"],
+        format_func=lambda x: x.capitalize()
+    )
+    if preset == "athletic":
+        defaults = [5,4,2,3]
+    elif preset == "studious":
+        defaults = [2,3,5,4]
+    elif preset == "sociable":
+        defaults = [4,3,2,5]
+    elif preset == "creative":
+        defaults = [2,5,4,3]
+    att["body"] = st.slider("Body: ",1,7,defaults[0])
+    att["eyes"] = st.slider("Eyes: ",1,7,defaults[1])
+    att["mind"] = st.slider("Mind: ",1,7,defaults[2])
+    att["heart"] = st.slider("Heart: ",1,7,defaults[3])
     total = sum(att.values())
     st.write(f"Points Remaining: {14 - total}")
 
@@ -282,6 +302,73 @@ def core_loop():
     for ec in g.ply.extracurriculars:
         options.append(ec)
 
+    st.header(f"Week {g.t.total_week}")
+
+    weekly_plan = st.multiselect("Select 3 things to focus on this week",
+                            options,
+                            max_selections=3,
+                            format_func=lambda x: core_format_dict[x]
+                            )
+    friends = []
+    parameter = ""
+    for task in weekly_plan:
+        if task == "group":
+            friends = st.multiselect(f"{format_dict[task]} with whom?", group_ready, max_selections=static.social["group"]["capacity"], format_func=lambda x: format_dict[x])
+        elif task == "solo":
+            friends = [st.selectbox(f"{format_dict[task]} with whom?", solo_ready, format_func=lambda x: format_dict[x])]
+        elif task == "practice":
+            parameter = st.selectbox(f"Practice which skill?", g.ply.skills, format_func=lambda x: x.capitalize())
+    submitted = st.button("Advance",disabled=((len(weekly_plan)<3) or (("group" in weekly_plan or "solo" in weekly_plan) and len(friends) == 0) or g.t.total_week >= 105))
+    update_container = st.container()
+
+    st.divider()
+
+    if submitted:
+        updated = {"rapport": set(), "skills": set(), "clubs": set()}
+        for task in weekly_plan:
+            if task in static.courses:
+                c_updated = g.advance_course(task)
+                updated["skills"].update(c_updated["skills"])
+                updated["rapport"].update(c_updated["rapport"])
+                updated["clubs"].update(c_updated["clubs"])
+                update(g)
+            elif task in static.extracurriculars:
+                e_updated = g.advance_extracurricular(task)
+                updated["skills"].update(e_updated["skills"])
+                updated["rapport"].update(e_updated["rapport"])
+                updated["clubs"].update(e_updated["clubs"])
+                update(g)
+            elif task in static.social:
+                s_updated = g.advance_social(task, friends)
+                updated["skills"].update(s_updated["skills"])
+                updated["rapport"].update(s_updated["rapport"])
+                updated["clubs"].update(s_updated["clubs"])
+                update(g)
+            elif task in static.personal:
+                p_updated = g.advance_personal(task, parameter)
+                updated["skills"].update(p_updated["skills"])
+                updated["rapport"].update(p_updated["rapport"])
+                updated["clubs"].update(p_updated["clubs"])
+                update(g)
+        if g.t.total_week < 105:
+            grades_updated = g.update_grades({"sciences":1,"humanities":1,"com_skills":1,"fine_arts":1,"life_skills":1})
+            update_container.empty()
+            g.t.advance_time()
+            if len(updated["skills"]) > 0:
+                update_container.write(f"Skills updated!! {', '.join([s.capitalize() for s in updated['skills']])} increased!")
+            if len(updated["rapport"]) > 0:
+                update_container.write(f"Rapport updated!! Friendship with {', '.join([r.capitalize() for r in updated['rapport']])} increased!")
+            if len(updated["clubs"]) > 0:
+                update_container.write(f"Club Ranks updated!! {', '.join([c.capitalize() for c in updated['clubs']])} increased!")
+            if grades_updated:
+                update_container.write(f"Exams have been graded!\nSciences: {g.ply.class_grades['sciences']}, Humanities: {g.ply.class_grades['humanities']}, Com Skills: {g.ply.class_grades['com_skills']}, Fine Arts: {g.ply.class_grades['fine_arts']}, Life Skills: {g.ply.class_grades['life_skills']}")
+            update(g)
+        else:
+            st.header("CONGRATULATIONS! You have graduated and reached the end of the game!")
+    save = make_save_string(g.ply, g.t.total_week)
+    st.write("Copy your save below to preserve current progress!")
+    st.code(save, wrap_lines=True)
+
     with st.sidebar:
         st.header("Menu")
         st.write(f"{static.calendar["month_names"][g.t.month]} {str(g.t.day)}, {str(g.t.year)}")
@@ -300,75 +387,34 @@ def core_loop():
             st.subheader("Skills:")
             with st.container(horizontal = True):
                 for s in g.ply.skills:
-                    st.write(str(s).capitalize() + ": " + str(math.floor(g.ply.skills[s]/10)))
+                    st.write(f"{s.capitalize()}: {g.ply.skills[s]}")
+                    # st.write(str(s).capitalize() + ": " + str(math.floor(g.ply.skills[s]/10)))
         with tab2:
             st.subheader("Course Grades")
             with st.container(horizontal = True):
                 for c in g.ply.class_grades:
                     if c == "fine_arts":
-                        st.write(format_dict[g.ply.art_elective] + ": " + str(g.ply.class_grades[c]))
+                        st.write(f"{format_dict[g.ply.art_elective]}: {g.ply.class_grades[c]}")
                     elif c == "life_skills":
-                        st.write(format_dict[g.ply.life_elective] + ": " + str(g.ply.class_grades[c]))
+                        st.write(f"{format_dict[g.ply.life_elective]}: {g.ply.class_grades[c]}")
                     else:
-                        st.write(format_dict[c] + ": " + str(g.ply.class_grades[c]))
+                        st.write(f"{format_dict[c]}: {g.ply.class_grades[c]}")
             st.divider()
             st.subheader("Extracurriculars")
             for e in g.ply.extracurriculars:
-                st.write(f"{format_dict[e]}: Rank {str(math.floor(g.ply.club_ranks[e]/10))}")
+                st.write(f"{format_dict[e]}: Rank {g.ply.club_ranks[e]}")
+                # st.write(f"{format_dict[e]}: Rank {str(math.floor(g.ply.club_ranks[e]/10))}")
         with tab3:
             with st.container(horizontal = True):
                 for f in g.ply.rapport:
-                    st.write(f"{format_dict[f]}: " + str(math.floor(g.ply.rapport[f]/10)))
+                    st.write(f"{format_dict[f]}: {g.ply.rapport[f]}")
+                    # st.write(f"{format_dict[f]}: " + str(math.floor(g.ply.rapport[f]/10)))
         with tab4:
             st.button("Quit to Main Menu",on_click=goto, args=["main"])
             st.write("BE SURE TO COPY YOUR SAVE!")
         st.divider()
 
-    st.header(f"Week {g.t.total_week}")
-    weekly_plan = st.multiselect("Select 3 things to focus on this week",
-                            options,
-                            max_selections=3,
-                            format_func=lambda x: core_format_dict[x]
-                            )
-    friends = []
-    parameter = ""
-    for task in weekly_plan:
-        if task == "group":
-            friends = st.multiselect(f"{format_dict[task]} with whom?", group_ready, max_selections=static.social["group"]["capacity"], format_func=lambda x: format_dict[x])
-        elif task == "solo":
-            friends = [st.selectbox(f"{format_dict[task]} with whom?", solo_ready, format_func=lambda x: format_dict[x])]
-        elif task == "practice":
-            parameter = st.selectbox(f"Practice which skill?", g.ply.skills, format_func=lambda x: x.capitalize())
-    submitted = st.button("Advance",disabled=((len(weekly_plan)<3) or (("group" in weekly_plan or "solo" in weekly_plan) and len(friends) == 0)))
-    if submitted:
-        for task in weekly_plan:
-            if task in static.courses:
-                course = task
-                if task == "fine_arts":
-                    course = g.ply.art_elective
-                elif task == "life_skills":
-                    course = g.ply.life_elective
-                g.advance_course(course)
-                update(g)
-            elif task in static.extracurriculars:
-                g.advance_extracurricular(task)
-                update(g)
-            elif task in static.social:
-                g.advance_social(task, friends)
-                update(g)
-            elif task in static.personal:
-                g.advance_personal(task, parameter)
-                update(g)
-        if g.t.total_week < 105:
-            g.t.advance_time()
-            g.update_grades()
-            update(g)
-        else:
-            st.header("CONGRATULATIONS! You have graduated and reached the end of the game!")
-        st.rerun()
-    save = make_save_string(g.ply, g.t.total_week)
-    st.write("Copy your save below to preserve current progress!")
-    st.code(save, wrap_lines=True)
+
 
 if st.session_state.page == "loop":
     core_loop()

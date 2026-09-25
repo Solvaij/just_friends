@@ -25,9 +25,9 @@ focus_codes = {
 }
 
 courses = {
-    "sciences": {"name": "Sciences", "skills": ["logic"], "alts": {"s", "sc", "sci", "science", "sciences"}, "index": "sciences"},
-    "humanities": {"name": "Humanities", "skills": ["recall"], "alts": {"h", "hum", "hummanitiy", "humanities"}, "index": "humanities"},
-    "com_skills": {"name": "Commercial Skills", "skills": ["perception"], "alts": {"c", "com", "com_skills", "com skills", "commerical", "commercial_skills", "commercial skills"}, "index": "com_skills"},
+    "sciences": {"name": "Sciences", "skills": ["logic", "recall"], "alts": {"s", "sc", "sci", "science", "sciences"}, "index": "sciences"},
+    "humanities": {"name": "Humanities", "skills": ["recall", "communication"], "alts": {"h", "hum", "hummanitiy", "humanities"}, "index": "humanities"},
+    "com_skills": {"name": "Commercial Skills", "skills": ["perception", "body_mech"], "alts": {"c", "com", "com_skills", "com skills", "commerical", "commercial_skills", "commercial skills"}, "index": "com_skills"},
     "visual_art": {"name": "Visual Arts", "skills": ["arts", "willpower"], "alts": {"va", "art", "visual_art", "visual art", "visual arts"}, "index": "visual_art"},
     "music": {"name": "Music", "skills": ["motor_skill", "reaction"], "alts": {"mu", "music"}, "index": "music"},
     "perform": {"name": "Performing Arts", "skills": ["presence", "acrobatics"], "alts": {"pa", "perform", "theater", "perform", "performance", "performing_arts", "performing arts"}, "index": "perform"},
@@ -71,32 +71,32 @@ calendar = {
     "month_days": {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31},
     "month_names": {1: "January", 2: "February", 3: "March", 4: "April", 5: "May", 6: "June", 7: "July", 8: "August", 9: "September", 10: "October", 11: "November", 12: "December"},
     "school": [
-        {"school_year": 1, "semester": "fall", "quarter": "harvest", "year": 1983, "start_date": "8-8", "end_date": "10-2"},
-        {"school_year": 1, "semester": "fall", "quarter": "midterms", "year": 1983, "start_date": "10-3", "end_date": "10-7"},
-        {"school_year": 1, "semester": "fall", "quarter": "break", "year": 1983, "start_date": "10-8", "end_date": "10-16"},
-        {"school_year": 1, "semester": "fall", "quarter": "autumn", "year": 1983, "start_date": "10-17", "end_date": "12-11"},
-        {"school_year": 1, "semester": "fall", "quarter": "finals", "year": 1983, "start_date": "12-12", "end_date": "12-16"},
-        {"school_year": 1, "semester": "winter", "quarter": "break", "year": 1983, "start_date": "12-17", "end_date": "1-22"},
-        {"school_year": 1, "semester": "spring", "quarter": "thawing", "year": 1984, "start_date": "1-23", "end_date": "3-18"},
-        {"school_year": 1, "semester": "spring", "quarter": "midterms", "year": 1984, "start_date": "3-19", "end_date": "3-23"},
-        {"school_year": 1, "semester": "spring", "quarter": "break", "year": 1984, "start_date": "3-24", "end_date": "4-1"},
-        {"school_year": 1, "semester": "spring", "quarter": "planting", "year": 1984, "start_date": "4-2", "end_date": "5-27"},
-        {"school_year": 1, "semester": "spring", "quarter": "finals", "year": 1984, "start_date": "5-28", "end_date": "6-1"},
-        {"school_year": 1, "semester": "national", "quarter": "exams", "year": 1984, "start_date": "6-2", "end_date": "6-15"},
-        {"school_year": 1, "semester": "summer", "quarter": "break", "year": 1984, "start_date": "6-16", "end_date": "8-5"},
-        {"school_year": 2, "semester": "fall", "quarter": "harvest", "year": 1984, "start_date": "8-6", "end_date": "9-30"},
-        {"school_year": 2, "semester": "fall", "quarter": "midterms", "year": 1984, "start_date": "10-1", "end_date": "10-5"},
-        {"school_year": 2, "semester": "fall", "quarter": "break", "year": 1984, "start_date": "10-6", "end_date": "10-14"},
-        {"school_year": 2, "semester": "fall", "quarter": "autumn", "year": 1984, "start_date": "10-15", "end_date": "12-9"},
-        {"school_year": 2, "semester": "fall", "quarter": "finals", "year": 1984, "start_date": "12-10", "end_date": "12-14"},
-        {"school_year": 2, "semester": "winter", "quarter": "break", "year": 1984, "start_date": "12-15", "end_date": "1-20"},
-        {"school_year": 2, "semester": "spring", "quarter": "thawing", "year": 1985, "start_date": "1-21", "end_date": "3-17"},
-        {"school_year": 2, "semester": "spring", "quarter": "midterms", "year": 1985, "start_date": "3-18", "end_date": "3-22"},
-        {"school_year": 2, "semester": "spring", "quarter": "break", "year": 1985, "start_date": "3-23", "end_date": "3-31"},
-        {"school_year": 2, "semester": "spring", "quarter": "planting", "year": 1985, "start_date": "4-1", "end_date": "5-26"},
-        {"school_year": 2, "semester": "spring", "quarter": "finals", "year": 1985, "start_date": "5-27", "end_date": "5-31"},
-        {"school_year": 2, "semester": "national", "quarter": "exams", "year": 1985, "start_date": "6-1", "end_date": "6-14"},
-        {"school_year": 2, "semester": "summer", "quarter": "break", "year": 1985, "start_date": "6-15", "end_date": "8-4"}
+        {"school_year": 1, "semester": "fall", "quarter": "harvest", "week": 1, "year": 1983, "start_date": "8-8", "end_date": "10-2"},
+        {"school_year": 1, "semester": "fall", "quarter": "midterms", "week": 9, "year": 1983, "start_date": "10-3", "end_date": "10-7"},
+        {"school_year": 1, "semester": "fall", "quarter": "break", "week": 10, "year": 1983, "start_date": "10-8", "end_date": "10-16"},
+        {"school_year": 1, "semester": "fall", "quarter": "autumn", "week": 11, "year": 1983, "start_date": "10-17", "end_date": "12-11"},
+        {"school_year": 1, "semester": "fall", "quarter": "finals", "week": 19, "year": 1983, "start_date": "12-12", "end_date": "12-16"},
+        {"school_year": 1, "semester": "winter", "quarter": "break", "week": 20, "year": 1983, "start_date": "12-17", "end_date": "1-22"},
+        {"school_year": 1, "semester": "spring", "quarter": "thawing", "week": 25, "year": 1984, "start_date": "1-23", "end_date": "3-18"},
+        {"school_year": 1, "semester": "spring", "quarter": "midterms", "week": 33, "year": 1984, "start_date": "3-19", "end_date": "3-23"},
+        {"school_year": 1, "semester": "spring", "quarter": "break", "week": 34, "year": 1984, "start_date": "3-24", "end_date": "4-1"},
+        {"school_year": 1, "semester": "spring", "quarter": "planting", "week": 35, "year": 1984, "start_date": "4-2", "end_date": "5-27"},
+        {"school_year": 1, "semester": "spring", "quarter": "finals", "week": 43, "year": 1984, "start_date": "5-28", "end_date": "6-1"},
+        {"school_year": 1, "semester": "national", "quarter": "exams", "week": 44, "year": 1984, "start_date": "6-2", "end_date": "6-15"},
+        {"school_year": 1, "semester": "summer", "quarter": "break", "week": 46, "year": 1984, "start_date": "6-16", "end_date": "8-5"},
+        {"school_year": 2, "semester": "fall", "quarter": "harvest", "week": 53, "year": 1984, "start_date": "8-6", "end_date": "9-30"},
+        {"school_year": 2, "semester": "fall", "quarter": "midterms", "week": 61, "year": 1984, "start_date": "10-1", "end_date": "10-5"},
+        {"school_year": 2, "semester": "fall", "quarter": "break", "week": 62, "year": 1984, "start_date": "10-6", "end_date": "10-14"},
+        {"school_year": 2, "semester": "fall", "quarter": "autumn", "week": 63, "year": 1984, "start_date": "10-15", "end_date": "12-9"},
+        {"school_year": 2, "semester": "fall", "quarter": "finals", "week": 71, "year": 1984, "start_date": "12-10", "end_date": "12-14"},
+        {"school_year": 2, "semester": "winter", "quarter": "break", "week": 72, "year": 1984, "start_date": "12-15", "end_date": "1-20"},
+        {"school_year": 2, "semester": "spring", "quarter": "thawing", "week": 77, "year": 1985, "start_date": "1-21", "end_date": "3-17"},
+        {"school_year": 2, "semester": "spring", "quarter": "midterms", "week": 85, "year": 1985, "start_date": "3-18", "end_date": "3-22"},
+        {"school_year": 2, "semester": "spring", "quarter": "break", "week": 86, "year": 1985, "start_date": "3-23", "end_date": "3-31"},
+        {"school_year": 2, "semester": "spring", "quarter": "planting", "week": 87, "year": 1985, "start_date": "4-1", "end_date": "5-26"},
+        {"school_year": 2, "semester": "spring", "quarter": "finals", "week": 95, "year": 1985, "start_date": "5-27", "end_date": "5-31"},
+        {"school_year": 2, "semester": "national", "quarter": "exams", "week": 96, "year": 1985, "start_date": "6-1", "end_date": "6-14"},
+        {"school_year": 2, "semester": "summer", "quarter": "break", "week": 98, "year": 1985, "start_date": "6-15", "end_date": "8-4"}
     ],
     "holidays": [
         (1,1,"New Year"), 
@@ -287,28 +287,6 @@ decode = {'0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,
           'y':150,'z':160,'!':170,"@":180,"#":190,"$":200,"%":210,"^":220,"&":230,"*":240,
           "(":250,")":260,"-":270,"_":280,"=":290,"+":300}
 
-# encode = ['0','1','2','3','4','5','6','7','8','9',
-#           'A','B','C','D','E','F','G','H','I','J',
-#           'K','L','M','N','O','P','Q','R','S','T',
-#           'U','V','W','X','Y','Z','a','b','c','d',
-#           'e','f','g','h','i','j','k','l','m','n',
-#           'o','p','q','r','s','t','u','v','w','x',
-#           'y','z','!',"@","#","$","%","^","&","*",
-#           "(",")","-","_","=","+","[","]","{","}",
-#           "|",";",":","'",'"',",","<",">","/","?",
-#           "~","`","\\","\"","'"]
-
-# decode = {'0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,
-#           'A':10,'B':11,'C':12,'D':13,'E':14,'F':15,'G':16,'H':17,'I':18,'J':19,
-#           'K':20,'L':21,'M':22,'N':23,'O':24,'P':25,'Q':26,'R':27,'S':28,'T':29,
-#           'U':30,'V':31,'W':32,'X':33,'Y':34,'Z':35,'a':36,'b':37,'c':38,'d':39,
-#           'e':40,'f':41,'g':42,'h':43,'i':44,'j':45,'k':46,'l':47,'m':48,'n':49,
-#           'o':50,'p':51,'q':52,'r':53,'s':54,'t':55,'u':56,'v':57,'w':58,'x':59,
-#           'y':60,'z':61,'!':62,"@":63,"#":64,"$":65,"%":66,"^":67,"&":68,"*":69,
-#           "(":70,")":71,"-":72,"_":73,"=":74,"+":75,"[":76,"]":77,"{":78,"}":79,
-#           "|":80,";":81,":":82,"'":83,'"':84,",":85,"<":86,">":87,"/":88,"?":89,
-#           "~":90,"`":91,"\\":92,"\"":93,"'":94}
-
 cdict = {'0': "sciences", '1': "humanities", '2': "com_skills", 
          '3': "visual_art", '4': "music", '5': "perform", '6': "poetry",
          '7': "health", '8': "cooking", '9': "mechanics", 'A': "oral_com",
@@ -378,3 +356,200 @@ edict = {'0':"soccer", '1': "staff", '2': "debate", '3': "band",
 #                         "newspaper": {}
 #                         }
 # }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Fall 1 Harvest Quarter
+#     Week 1 August 8-14
+#     Week 2 August 15-21
+#     Week 3 August 22-28
+#     Week 4 August 29-September 4
+#     Week 5 September 5-11
+#     Week 6 September 12-18
+#     Week 7 September 19-25
+#     Week 8 September 26-October 2
+
+# Fall 1 Midterms
+#     Week 9 October 3-9
+
+# Fall 1 Break
+#     Week 10 October 10-16
+
+# Fall 1 Autumn Quarter
+#     Week 11 October 17-23
+#     Week 12 October 24-30
+#     Week 13 October 31-November 6
+#     Week 14 November 7-13
+#     Week 15 November 14-20
+#     Week 16 November 21-27
+#     Week 17 November 28-December 4
+#     Week 18 December 5-11
+
+# Fall 1 Finals
+#     Week 19 December 12-18
+
+# Winter 1 Break
+#     Week 20 December 19-25
+#     Week 21 December 26-January 1
+#     Week 22 January 2-8
+#     Week 23 January 9-15
+#     Week 24 January 16-22
+
+# Spring 1 Thawing Quarter
+#     Week 25 January 23-29
+#     Week 26 January 30-February 5
+#     Week 27 February 6-12
+#     Week 28 February 13-19
+#     Week 29 February 20-26
+#     Week 30 February 27-March 4
+#     Week 31 March 5-11
+#     Week 32 March 12-18
+
+# Spring 1 Midterms
+#     Week 33 March 19-25
+
+# Spring 1 Break
+#     Week 34 March 26-April 1
+
+# Spring 1 Planting Quarter
+#     Week 35 April 2-8
+#     Week 36 April 9-15
+#     Week 37 April 16-22
+#     Week 38 April 23-29
+#     Week 39 April 30-May 6
+#     Week 40 May 7-13
+#     Week 41 May 14-20
+#     Week 42 May 21-27
+
+# Spring 1 Finals
+#     Week 43 May 28-June 3
+
+# Summer 1 National Exams
+#     Week 44 June 4-10
+#     Week 45 June 11-17
+
+# Summer 1 Break
+#     Week 46 June 18-24
+#     Week 47 June 25-July 1
+#     Week 48 July 2-8
+#     Week 49 July 9-15
+#     Week 50 July 16-22
+#     Week 51 July 23-29
+#     Week 52 July 30-August 5
+
+# Fall 2 Harvest Quarter
+#     Week 53 August 8-14
+#     Week 54 August 15-21
+#     Week 55 August 22-28
+#     Week 56 August 29-September 4
+#     Week 57 September 5-11
+#     Week 58 September 12-18
+#     Week 59 September 19-25
+#     Week 60 September 26-October 2
+
+# Fall 2 Midterms
+#     Week 61 October 3-9
+
+# Fall 2 Break
+#     Week 62 October 10-16
+
+
+# Fall 2 Autumn Quarter
+#     Week 63 October 17-23
+#     Week 64 October 24-30
+#     Week 65 October 31-November 6
+#     Week 66 November 7-13
+#     Week 67 November 14-20
+#     Week 68 November 21-27
+#     Week 69 November 28-December 4
+#     Week 70 December 5-11
+
+
+# Fall 2 Finals
+#     Week 71 December 12-18
+
+
+# Winter 2 Break
+#     Week 72 December 19-25
+#     Week 73 December 26-January 1
+#     Week 74 January 2-8
+#     Week 75 January 9-15
+#     Week 76 January 16-22
+
+
+# Winter 2 Thawing Quarter
+#     Week 77 January 23-29
+#     Week 78 January 30-February 5
+#     Week 79 February 6-12
+#     Week 80 February 13-19
+#     Week 81 February 20-26
+#     Week 82 February 27-March 4
+#     Week 83 March 5-11
+#     Week 84 March 12-18
+
+
+# Winter 2 Midterms
+#     Week 85 March 19-25
+
+
+# Winter 2 Break
+#     Week 86 March 26-April 1
+
+
+# Spring 2 Planting Quarter
+#     Week 87 April 2-8
+#     Week 88 April 9-15
+#     Week 89 April 16-22
+#     Week 90 April 23-29
+#     Week 91 April 30-May 6
+#     Week 92 May 7-13
+#     Week 93 May 14-20
+#     Week 94 May 21-27
+
+
+# Spring 2 Finals
+#     Week 95 May 28-June 3
+
+
+# Summer 2 National Exams
+#     Week 96 June 4-10
+#     Week 97 June 11-17
+
+
+# Summer 2 Break
+#     Week 98 June 18-24
+#     Week 99 June 25-July 1
+#     Week 100 July 2-8
+#     Week 101 July 9-15
+#     Week 102 July 16-22
+#     Week 103 July 23-29
+#     Week 104 July 30-August 5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
